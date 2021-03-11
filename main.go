@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"os/signal"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -76,11 +77,6 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		s.ChannelMessageSend(m.ChannelID, "Ping!")
 	}
 
-	if m.Content == "rand" {
-		rand.Seed(time.Now().UnixNano())
-		s.ChannelMessageSend(m.ChannelID, "<@!"+m.Author.ID+"> "+fmt.Sprint(rand.Int()%64))
-	}
-
 	if m.Content == "time" {
 		s.ChannelMessageSend(m.ChannelID, "<@!"+m.Author.ID+"> "+fmt.Sprint(time.Now()))
 	}
@@ -88,5 +84,20 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if strings.Contains(strings.ToLower(m.Content), "uwu") {
 		s.ChannelMessageSend(m.ChannelID, "<@!"+m.Author.ID+"> "+"🥺")
 	}
-	s.UpdateStreamingStatus(0, m.Content, "https://www.twitch.tv/mcstrugs")
+
+	if strings.HasPrefix(m.Content, "!rand") {
+		spaced_words := strings.Split(m.Content, " ")
+		if len(spaced_words) == 2 {
+			max, err := strconv.ParseInt(strings.Split(m.Content, " ")[1], 10, 64)
+			if err != nil {
+				fmt.Println(err)
+				s.ChannelMessageSend(m.ChannelID, "!rand argument must be integer")
+			} else {
+				rand.Seed(time.Now().UnixNano())
+				s.ChannelMessageSend(m.ChannelID, fmt.Sprint(rand.Int()%int(max)))
+			}
+		} else {
+			s.ChannelMessageSend(m.ChannelID, "!rand requires one, and only one argument")
+		}
+	}
 }
