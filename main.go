@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -77,10 +78,14 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	if m.Content == "rand" {
 		rand.Seed(time.Now().UnixNano())
-		s.ChannelMessageSend(m.ChannelID, "<@!"+m.Author.ID+"> "+fmt.Sprint(rand.Int()))
+		s.ChannelMessageSend(m.ChannelID, "<@!"+m.Author.ID+"> "+fmt.Sprint(rand.Int()%64))
 	}
 
 	if m.Content == "time" {
-		s.ChannelMessageSend(m.ChannelID, "<@!"+m.Author.ID+"> "+fmt.Sprint(time.Now().UnixNano()))
+		s.ChannelMessageSend(m.ChannelID, "<@!"+m.Author.ID+"> "+fmt.Sprint(time.Now()))
+	}
+
+	if strings.Contains(strings.ToLower(m.Content), "uwu") {
+		s.ChannelMessageSend(m.ChannelID, "<@!"+m.Author.ID+"> "+"🥺")
 	}
 }
