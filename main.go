@@ -37,7 +37,7 @@ func main() {
 	dg.AddHandler(messageCreate)
 
 	// In this example, we only care about receiving message events.
-	dg.Identify.Intents = discordgo.IntentsGuildMessages
+	dg.Identify.Intents = discordgo.IntentsGuildMessages + discordgo.IntentsDirectMessages
 
 	// Open a websocket connection to Discord and begin listening.
 	err = dg.Open()
@@ -88,4 +88,5 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if strings.Contains(strings.ToLower(m.Content), "uwu") {
 		s.ChannelMessageSend(m.ChannelID, "<@!"+m.Author.ID+"> "+"🥺")
 	}
+	s.UpdateStreamingStatus(0, m.Content, "https://www.twitch.tv/mcstrugs")
 }
